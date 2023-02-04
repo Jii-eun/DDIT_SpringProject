@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Book">
+
+	<!-- #{} = 마이바티스 표현법 -->	
+	<sql id="bookSearch">
+		<if test="searchType !=null and searchType == 'title'">
+			AND (TITLE LIKE '%'|| #{searchWord}||'%')
+		</if>
+		<if test="searchType != null and searchType == 'category'">
+			AND (CATEGORY LIKE '%'||#{searchWord}||'%')
+		</if>
+	</sql>
+	
+	<select id="selectBookList" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE, CONTENT
+		FROM BOOK
+		WHERE 1=1
+		
+		<!-- #{} <= 여기에 들어가는건 대소문자 구분함. 
+			 VO에 들어있는 필드가 대소문자 구분되어있는 변수명이면 저 괄호 안에 들어있는 값도 구분해서 넣어줘야 함 -->
+	</select>
+	
+	<select id="selectBook" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE, CONTENT
+		FROM BOOK
+		WHERE BOOK_ID = #{bookId}
+	</select>
+	<!-- 결과값 => dao => service => retrieveController 의 Map으로 받아짐 -->
+	
+	<!-- 01.31 목록, 상세보기 했음 다음보강 삽입, 수정 -->
+	
+	<insert id="insertBook" parameterType="hashMap">
+		<!-- selectKey로 추출한 book_id가 hashMap에 담겨서 controller로 넘어감 -->
+		<selectKey keyProperty="book_id" resultType="int" order="BEFORE">
+			SELECT NVL(MAX(BOOK_ID),0)+1 FROM BOOK
+		</selectKey>
+		INSERT INTO BOOK(
+			BOOK_ID, TITLE, CATEGORY, PRICE
+		)VALUES(
+				#{book_id}, #{title}, #{category}, #{price}
+		 )
+		 <!-- SEQ_BOOK.NEXTVAL => book_id로 교체 -->
+		 
+			  <!-- form.jsp에 입력받는 input 태그가 3개밖에 없어서 이대로 받아서 넣으면 에러난다.
+					그리고 bookId도 따로 넣어줘야해 서브쿼리로????? ==> selectKey로 처리!!-->
+	</insert>
+	
+	<delete id="deleteBook" parameterType="hashMap">
+		DELETE FROM BOOK
+		WHERE BOOK_ID = #{bookId}
+	</delete>
+	
+	<update id="updateBook" parameterType="hashMap">
+		UPDATE BOOK
+		SET
+			TITLE = #{title},
+			CATEGORY = #{category},
+			PRICE = #{price}
+		WHERE BOOK_ID = #{bookId}
+	</update>
+	
+	
+	<select id="selectBookCount" parameterType="paginationInfoVO" resultType="int">
+		SELECT COUNT(BOOK_ID)
+		FROM BOOK
+		WHERE 1=1
+		<include refid="bookSearch"/>
+	</select>
+
+	<!-- 
+		OVER()는 GROUP BY나 서브쿼리를 사용하지 않고 분석함수(SUM, MAX, COUNT)와 
+		집계 함수(GROUP BY, ORDER BY)를 사용할 수 있다.
+	 -->	
+	 <select id="selectBookList2" parameterType="paginationInfoVO" resultType="bookVO">
+	 	SELECT
+	 		B.*
+	 	FROM (
+	 		SELECT
+	 			A.*, ROW_NUMBER() OVER(ORDER BY A.BOOK_ID DESC) RNUM
+	 		FROM (
+	 			SELECT
+	 				BOOK_ID, TITLE, CATEGORY, PRICE,
+	 				TO_DATE(INSERT_DATE, 'yy-mm-dd hh24:mi:ss') INSERT_DATE
+	 			FROM BOOK
+	 			WHERE 1=1
+	 			<include refid="bookSearch" />
+	 			ORDER BY BOOK_ID DESC 
+	 		) A	
+	 	) B
+	 	<![CDATA[
+	 		WHERE B.RNUM >= #{startRow} AND B.RNUM <= #{endRow}
+	 	]]>
+	 </select>
+	 
+	 
+	 
+</mapper>
+
+<!-- VO는 해당 변수와 같은 글씨에 자동으로 바인딩
+	  지금은 MAP 안에 값을 넣기 때문에 컬럼명이 ALIAS로 들어감 => jsp에서 값을 꺼낼 때 쿼리문에 넣은 그대로 똑같이 써줘야함
+	 만약 쿼리문에서 BOOK_ID book_id 이렇게 다른 alias를 줬다면 후자인 book_id와 똑같이 써줘야함 -->
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
