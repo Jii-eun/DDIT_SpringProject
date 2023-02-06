@@ -16,6 +16,8 @@
       <typeAlias type="kr.or.ddit.vo.BookVO" alias="bookVO" />      
       <typeAlias type="kr.or.ddit.vo.LprodVO" alias="lprodVO" />      
       <typeAlias type="kr.or.ddit.vo.AttachVO" alias="attachVO" />      
+      <typeAlias type="kr.or.ddit.vo.CusVO" alias="cusVO" />      
+      <typeAlias type="kr.or.ddit.vo.CarVO" alias="carVO" />      
    </typeAliases>
 </configuration>
 
