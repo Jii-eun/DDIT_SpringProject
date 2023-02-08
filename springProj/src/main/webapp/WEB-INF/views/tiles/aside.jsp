@@ -66,7 +66,7 @@
 	<li class="nav-item">
        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCus"
            aria-expanded="true" aria-controls="collapseCus">
-           <i class="fas fa-fw fa-wrench"></i>
+           <i class="fas fa-fw fa-angle-right"></i>
            <span>고객관리</span>
        </a>
        <div id="collapseCus" class="collapse" aria-labelledby="headingUtilities"
@@ -75,6 +75,23 @@
                <h6 class="collapse-header">고객정보관리:</h6>
                <a class="collapse-item" href="/cus/create">고객등록</a>
                <a class="collapse-item" href="/cus/list">고객목록</a>
+           </div>
+       </div>
+    </li>
+    
+    <!-- 직원관리 -->
+	<li class="nav-item">
+       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmp"
+           aria-expanded="true" aria-controls="collapseEmp">
+           <i class="fas fa-fw fa-check"></i>
+           <span>직원관리</span>
+       </a>
+       <div id="collapseEmp" class="collapse" aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar">
+           <div class="bg-white py-2 collapse-inner rounded">
+               <h6 class="collapse-header">직원정보관리:</h6>
+               <a class="collapse-item" href="/emp/create">직원등록</a>
+               <a class="collapse-item" href="/emp/list">직원목록</a>
            </div>
        </div>
     </li>

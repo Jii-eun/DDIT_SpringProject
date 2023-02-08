@@ -39,7 +39,7 @@ public class CusController {
 	//요청URI : /cus/create
 	@GetMapping("/create")		//create.jsp에 있는 form태그의 modelAttribute="cusVO"에 적힌 cusVO와 연결(form태그 때문에)
 	public void create(CusVO cusVO, Model model) {
-		log.info("create()에 왔다");
+		log.info("create()에 왔다");	//만약 파라미터로 cusVO를 안받고  메소드 안에서 선언해서 담는다면 그 vo객체를 model에 다시 담아줘야 한다.
 		
 		//기본키 데이터 생성
 		String cusNum = this.cusService.getNextCusNum();
@@ -162,6 +162,8 @@ public class CusController {
 		//forwarding
 		return "cus/detail";
 	}
+	
+	
 }
 
 

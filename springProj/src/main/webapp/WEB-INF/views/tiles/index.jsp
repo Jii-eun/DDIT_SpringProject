@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <!DOCTYPE html>
-<html>
+<html class>
 <head>
 
     <title>SB Admin 2 - Dashboard</title>
@@ -19,7 +19,7 @@
 
 </head>
 
-<body id="page-top">
+<body id="page-top" class="sidebar-mini sidebar-closed sidebar-collapse">
 
     <!-- Page Wrapper -->
     <div id="wrapper">

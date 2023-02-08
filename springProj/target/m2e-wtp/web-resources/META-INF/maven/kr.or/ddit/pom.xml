@@ -208,7 +208,7 @@
 	<!-- tiles 끝 -->
 		
 	<!-- 2023.01.26 -->
-	<!-- json 데이터 바인딩을 위한 의존 라이브러리 -->	
+	<!-- json 데이터 바인딩을 위한 의존 라이브러리 ==> requestbody, responsebody를 지원해줌 -->	
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
