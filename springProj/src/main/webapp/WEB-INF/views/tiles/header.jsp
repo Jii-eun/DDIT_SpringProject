@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+ <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -167,39 +168,110 @@
         </li>
 
         <div class="topbar-divider d-none d-sm-block"></div>
+		
+		<!--	스프링 시큐리티 표현식
+				인증 및 권한 정보에 따라 화면을 동적으로 구성할 수 있고, 로그인한 사용자 정보를 보여줄 수도 있음
+				- hasRole("ROLE_MEMBER") : ROLE_MEMBER 권한이 있으면 true
+				- hasAnyRole("ROLE_MEMBER", "ROLE_ADMIN") : 여러 권한 중 하나라도 해당하는 권한이 있으면 true
+				- principal : 인증된 사용자의 사용자 정보
+							  (UserDetails 인터페이스를 구현한 클래스(customUser)의 객체(memVO)를 의미)
+				- authentication : 인증된 사용자의 인증 정보
+				- permitAll : 모든 사용자에게 허용
+				- denyAll : 모든 사용자를 거부
+				- isAnonymous() : 로그인하지 않은 경우 해당
+				- isAuthenticated() : 로그인한 경우 true
+				- isFullAuthenticated() : Remember-me(로그인 저장)로 인증된 것이 아닌 일반적인 방법으로 인증된 사용자의 경우 true  
+		
+		 -->
+        
+        <!-- =======================로그인 했을 때 시작======================= -->
+        <!-- authorize: 권한, authentication : 인증(로그인했을 때) -->
+        <sec:authorize access="isAuthenticated()">
+        <!-- CustomUser.java에서 선언한 private MemVO memVO 멤버변수를 principal객체를 통해 사용 가능 -->
+        <sec:authentication property="principal.memVO" var="memVO" />
+	        <!-- Nav Item - User Information -->
+	        <li class="nav-item dropdown no-arrow">
+	            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+	                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                <span class="mr-2 d-none d-lg-inline text-gray-600 small">${memVO.userName} </span>
+	                <img class="img-profile rounded-circle"
+	                    src="/resources/images/lne.jpg">
+	            </a>
+	            <!-- Dropdown - User Information -->
+	            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+	                aria-labelledby="userDropdown">
+	                <a class="dropdown-item" href="#">
+	                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+	                    Profile
+	                </a>
+	                <a class="dropdown-item" href="#">
+	                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+	                    Settings
+	                </a>
+	                <a class="dropdown-item" href="#">
+	                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+	                    Activity Log
+	                </a>
+	                <div class="dropdown-divider"></div>
+	                <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal">
+	                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+	                    Logout
+	                </a>
+	            </div>
+	        </li>
+        </sec:authorize>
+        <!-- ======================= 로그인 했을 때 끝 ======================= -->
 
-        <!-- Nav Item - User Information -->
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-<!--                 <img class="img-profile rounded-circle" -->
-<!--                     src="img/undraw_profile.svg"> -->
-            </a>
-            <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Activity Log
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Logout
-                </a>
-            </div>
-        </li>
-
+        <!-- =======================로그인 안 되었을 때 시작======================= -->
+        <sec:authorize access="isAnonymous()">
+			<li class="nav-item dropdown no-arrow">
+	            <a class="nav-link dropdown-toggle" href="/login" id="userDropdown" role="button">
+	                <span class="mr-2 d-none d-lg-inline text-gray-600 small">LogIn</span>
+	                <img class="img-profile rounded-circle"
+	                    src="/resources/images/profile.jpg">
+	            </a>
+	        </li>
+		</sec:authorize>
+        <!-- =======================로그인 안 되었을 때 끝======================= -->
     </ul>
 
 </nav>
 <!-- End of Topbar -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

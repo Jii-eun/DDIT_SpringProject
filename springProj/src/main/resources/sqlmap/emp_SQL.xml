@@ -6,6 +6,15 @@
 -->
 <mapper namespace="kr.or.ddit.mapper.EmpMapper">
 	
+	<sql id="search">
+		<!-- 조건 검색 -->
+		<if test="keyword!=null and keyword!=''">
+		AND (T.EMP_NUM LIKE '%' || #{keyword} || '%'
+		     OR T.EMP_NM LIKE '%' || #{keyword} || '%'
+		     OR T.EMP_MJ_NM LIKE '%' || #{keyword} || '%')
+		</if>
+	</sql>
+	
 	<!-- 다음 직원번호를 가져옴 -->
 	<select id="getEmpNum" resultType="String">
 		select NVL(SUBSTR(MAX(EMP_NUM), 1, 3), 'EMP')
@@ -70,7 +79,7 @@
             		SELECT B.EMP_MJ_NUM FROM EMP B WHERE B.EMP_NUM = #{empNum}   
         		)
 	</select>
-	
+
 	<!-- 직원 삭제
 		empVO : {empNum=EMP001, zipCode=null, address=null, ..., empMjNum=null} 
 	 -->
@@ -80,13 +89,118 @@
 		WHERE	EMP_NUM = #{empNum}
 	</delete>
 	
-	<!-- 직원 목록 -->
-	<select id="list" resultType="empVO">
-		SELECT 		EMP_NUM, EMP_ADDR, EMP_PHE, EMP_NM, EMP_PAY, EMP_MJ_NUM
-		FROM 		EMP
-		START WITH 	EMP_MJ_NUM IS NULL
-		CONNECT BY PRIOR EMP_NUM = EMP_MJ_NUM
+	<!-- 직원 목록  ==> 계층형 쿼리 
+		드루와(파라미터) : map {show=10, keyword=개똥이}
+		==> 페이징 처리 후 파라미터 : map{show:10,keyword:개똥이, currentPage:1}
+		
+		* LIKE 와 함께 사용한  %, _를 와일드카드라고 함
+	-->
+	 
+	<select id="list" resultType="empVO" parameterType="hashMap">
+<!-- 		SELECT 		EMP_NUM, EMP_ADDR, EMP_PHE, EMP_NM, EMP_PAY, EMP_MJ_NUM -->
+<!-- 		FROM 		EMP -->
+<!-- 		START WITH 	EMP_MJ_NUM IS NULL -->
+<!-- 		CONNECT BY PRIOR EMP_NUM = EMP_MJ_NUM -->
+
+<!-- 		SELECT  A.EMP_NUM, A.EMP_ADDR, A.EMP_PHE, A.EMP_NM, A.EMP_PAY -->
+<!-- 				 , A.EMP_MJ_NUM -->
+<!--        			 ,(SELECT B.EMP_NM FROM EMP B WHERE B.EMP_NUM = A.EMP_MJ_NUM) EMP_MJ_NM   -->
+<!-- 		FROM    EMP A -->
+<!-- 		START WITH A.EMP_MJ_NUM IS NULL -->
+<!-- 		CONNECT BY PRIOR A.EMP_NUM = A.EMP_MJ_NUM -->
+		
+		<!-- 글 개수 & keyword 추가 -->
+<!-- 		WITH T AS(SELECT  A.EMP_NUM, A.EMP_ADDR, A.EMP_PHE, A.EMP_NM, A.EMP_PAY -->
+<!-- 		         , A.EMP_MJ_NUM -->
+<!-- 		         ,(SELECT B.EMP_NM FROM EMP B WHERE B.EMP_NUM = A.EMP_MJ_NUM) EMP_MJ_NM   -->
+<!-- 				FROM    EMP A -->
+<!-- 				START WITH A.EMP_MJ_NUM IS NULL -->
+<!-- 				CONNECT BY PRIOR A.EMP_NUM = A.EMP_MJ_NUM -->
+<!-- 				) -->
+<!-- 		SELECT * -->
+<!-- 		FROM T -->
+<!-- 		WHERE 1=1 -->
+<!-- 		<include refid="search"></include> -->
+		
+		<!-- 페이징 처리 -->
+		SELECT *
+		FROM
+			( 
+			    WITH T AS(SELECT  A.EMP_NUM, A.EMP_ADDR, A.EMP_PHE, A.EMP_NM, A.EMP_PAY
+			                     , A.EMP_MJ_NUM
+			                     ,(SELECT B.EMP_NM FROM EMP B WHERE B.EMP_NUM = A.EMP_MJ_NUM) EMP_MJ_NM  
+			            FROM    EMP A
+			            START WITH A.EMP_MJ_NUM IS NULL
+			            CONNECT BY PRIOR A.EMP_NUM = A.EMP_MJ_NUM)
+			    SELECT ROWNUM RNUM
+			            , T.EMP_NUM, T.EMP_ADDR, T.EMP_PHE, T.EMP_NM, T.EMP_PAY, T.EMP_MJ_NUM, T.EMP_MJ_NM
+			    FROM T
+			    WHERE 1=1
+			    <include refid="search"></include>
+		    ) U
+		WHERE U.RNUM BETWEEN (#{currentPage} * #{show}) - (#{show} - 1) AND ( #{currentPage} * #{show})
+		
 	</select>
+	
+	<!-- 직원 1명의 정보 리턴 -->
+	<select id="detailOne" parameterType="empVO" resultType="empVO">
+		SELECT A.EMP_NUM, A.EMP_ADDR, A.EMP_PHE, A.EMP_NM, A.EMP_PAY, A.EMP_MJ_NUM
+		, (SELECT B.EMP_NM FROM EMP B WHERE B.EMP_NUM = A.EMP_MJ_NUM) EMP_MJ_NM
+				<!-- ↑ 매니저의 매니저 정보도 필요하니까 밑에줄 추가 -->
+		FROM   EMP A
+		WHERE  A.EMP_NUM = #{empMjNum}
+	</select>
+	
+	<!-- 목록의 행 수를 구함 -->
+	<select id="getTotal" parameterType="hashMap" resultType="int">
+		WITH T AS(SELECT  A.EMP_NUM, A.EMP_ADDR, A.EMP_PHE, A.EMP_NM, A.EMP_PAY
+		         , A.EMP_MJ_NUM
+		         ,(SELECT B.EMP_NM FROM EMP B WHERE B.EMP_NUM = A.EMP_MJ_NUM) EMP_MJ_NM  
+				FROM    EMP A
+				START WITH A.EMP_MJ_NUM IS NULL
+				CONNECT BY PRIOR A.EMP_NUM = A.EMP_MJ_NUM
+				)
+		SELECT COUNT(*) TOTAL
+		FROM T
+		WHERE 1=1
+		<include refid="search"></include>
+		
+	</select>
+	
+	
+	<!-- ============================================== -->
+	<!-- 편의상 여기에서 MEM, MEM_AUTH 테이블 관련 쿼리 작성 -->
+	
+	<resultMap type="memVO" id="memMap">
+		<result property="userNo" column="USER_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="userPw" column="USER_PW"/>
+		<result property="userName" column="USER_NAME"/>
+		<result property="coin" column="COIN"/>
+		<result property="regDate" column="REG_DATE"/>
+		<result property="updDate" column="UPD_DATE"/>
+		<result property="enabled" column="ENABLED"/>
+		<collection property="memAuthVOList" resultMap="memAuthMap"></collection>
+	</resultMap>
+	
+	<resultMap type="memAuthVO" id="memAuthMap">
+		<result property="userNo" column="USER_NO"/>
+		<result property="auth" column="AUTH"/>
+	</resultMap>	
+	
+	<!-- 회원 로그인 -->
+	<select id="memLogin" parameterType="memVO" resultMap="memMap">
+		SELECT  A.USER_NO, A.USER_ID, A.USER_PW, A.USER_NAME, A.COIN
+				, A.REG_DATE, A.UPD_DATE, A.ENABLED
+		        , B.USER_NO, B.AUTH
+		FROM    MEM A LEFT OUTER JOIN MEM_AUTH B 
+		        ON(A.USER_NO = B.USER_NO)
+		WHERE A.USEr_ID = #{userId}     
+	</select>
+	
+	
+	
+	
 </mapper>
   
   

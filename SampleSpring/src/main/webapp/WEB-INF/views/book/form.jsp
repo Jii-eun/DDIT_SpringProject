@@ -9,7 +9,10 @@
 <body>
 	<h3>책 등록</h3>
 	<hr/>
-	<form action="" method="post" >
+		<!-- action 주소가 없으면 원래 주소로 남아있는다.
+			=> 현재의 form.do가 action의 주소가 된다.
+		 -->
+	<form action="" method="post" enctype="multipart/form-data">
 		<table> 
 			<tr>
 				<td>제목</td>
@@ -28,6 +31,10 @@
 				<td>
 					<input type="text" name="price" id="price"/>
 				</td>
+			</tr>
+			<tr>
+				<td>파일</td>
+				<td><input type="file" name="bookFile" multiple="multiple" /> </td>
 			</tr>
 		</table>
 		<input type="submit" value="등록" />

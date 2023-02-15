@@ -31,6 +31,8 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.web.filter.DelegatingFilterProxy;
+
 
 /*	Controller 어노테이션
 	스프링 프레임워크에게 "이 클래스는 웹 브라우저(클라이언트)의 요청(request)

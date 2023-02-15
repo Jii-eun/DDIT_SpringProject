@@ -1,19 +1,16 @@
 package kr.or.ddit.service.impl;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import kr.or.ddit.dao.BookDao;
 import kr.or.ddit.dao.LprodDao;
-import kr.or.ddit.service.BookService;
 import kr.or.ddit.service.LprodService;
 import kr.or.ddit.vo.AttachVO;
-import kr.or.ddit.vo.BookVO;
 import kr.or.ddit.vo.LprodVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -98,6 +95,116 @@ public class LprodServiceImpl implements LprodService {
 	@Override
 	public int getTotal(String keyword) {
 		return this.lprodDao.getTotal(keyword);
+	}
+	
+	//상품별 판매금액의 합계가 천만원을 넘은 데이터 ============> simpleData.json파일이랑 비교해서 보면 이해가 쉽다.
+	@Override
+	public JSONObject cartMoney(){
+		//LprodDao에서 list로 받아온 값을 밑에서 JSONObject로 바꿔준다.
+		//json => object 파싱
+		//object => json 스크립트에서는 stringify
+		List<Map<String, Object>> list = this.lprodDao.cartMoney();
+
+		System.out.println("list : " + list.get(0).toString());
+
+		// sampleData.json 파일 참고
+		// 0. 리턴할 json객체--------------------------
+		JSONObject data = new JSONObject(); // {}
+
+		// 1.cols 배열에 넣기	(==컬럼명)
+		// JSON 컬럼 객체---------------------------------------------
+		JSONObject col1 = new JSONObject();	//첫번재 컬럼
+		JSONObject col2 = new JSONObject();	//두번째 컬럼
+		// JSON 배열 객체
+		JSONArray title = new JSONArray();
+		col1.put("label", "상품명");		//json 파일에 적었던 key:value
+		col1.put("type", "string");
+		col2.put("label", "금액");
+		col2.put("type", "number");
+		// 타이틀행에 컬럼 추가
+		title.add(col1);		//배열의 title이 들어간 것
+		title.add(col2);
+
+		// json객체에 타이틀행 추가
+		data.put("cols", title);	//data = 최종목표 	//cols라는 이름으로 valeu인 title을 넣음
+		// {"cols":[{"label":"상품명","type":"string"},{"label":"금액","type":"number"}]}
+
+		// 2.rows 배열에 넣기	(==컬럼 데이터)
+		JSONArray body = new JSONArray(); // rows
+		for (Map<String, Object> map : list) {
+			JSONObject prodName = new JSONObject();
+			prodName.put("v", map.get("PROD_NAME")); // 상품명
+
+			JSONObject money = new JSONObject();
+			money.put("v", map.get("MONEY")); // 금액
+
+			JSONArray row = new JSONArray();
+			row.add(prodName);
+			row.add(money);
+
+			JSONObject cell = new JSONObject();
+			cell.put("c", row);
+			body.add(cell); // 레코드 1개 추가
+		}
+
+		data.put("rows", body);
+
+		return data;
+	}
+	
+	//회원별 구매횟수 구하기
+	@Override
+	public JSONObject memberMoney(){
+		// LprodDao에서 list로 받아온 값을 밑에서 JSONObject로 바꿔준다.
+		// json => object 파싱
+		// object => json 스크립트에서는 stringify
+		List<Map<String, Object>> list = this.lprodDao.memberMoney();
+
+		System.out.println("list : " + list.get(0).toString());
+
+		// sampleData.json 파일 참고
+		// 0. 리턴할 json객체--------------------------
+		JSONObject data = new JSONObject(); // {}
+
+		// 1.cols 배열에 넣기 (==컬럼명)
+		// JSON 컬럼 객체---------------------------------------------
+		JSONObject col1 = new JSONObject(); // 첫번재 컬럼
+		JSONObject col2 = new JSONObject(); // 두번째 컬럼
+		// JSON 배열 객체
+		JSONArray title = new JSONArray();
+		col1.put("label", "회원"); // json 파일에 적었던 key:value
+		col1.put("type", "string");
+		col2.put("label", "구매횟수");
+		col2.put("type", "number");
+		// 타이틀행에 컬럼 추가
+		title.add(col1); // 배열의 title이 들어간 것
+		title.add(col2);
+
+		// json객체에 타이틀행 추가
+		data.put("cols", title); // data = 최종목표 //cols라는 이름으로 valeu인 title을 넣음
+		// {"cols":[{"label":"상품명","type":"string"},{"label":"금액","type":"number"}]}
+
+		// 2.rows 배열에 넣기 (==컬럼 데이터)
+		JSONArray body = new JSONArray(); // rows
+		for (Map<String, Object> map : list) {
+			JSONObject memId = new JSONObject();
+			memId.put("v", map.get("MEMID")); // 회원
+
+			JSONObject cartCNT = new JSONObject();
+			cartCNT.put("v", map.get("CARTCNT")); // 횟수
+
+			JSONArray row = new JSONArray();
+			row.add(memId);
+			row.add(cartCNT);
+
+			JSONObject cell = new JSONObject();
+			cell.put("c", row);
+			body.add(cell); // 레코드 1개 추가
+		}
+
+		data.put("rows", body);
+
+		return data;
 	}
 	
 	

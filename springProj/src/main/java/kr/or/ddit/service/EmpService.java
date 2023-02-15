@@ -1,8 +1,10 @@
 package kr.or.ddit.service;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.vo.EmpVO;
+import kr.or.ddit.vo.MemVO;
 
 public interface EmpService {
 	//메소드 시그니처
@@ -15,7 +17,17 @@ public interface EmpService {
 	//직원 상세 보기(관리자가 있으면 관리자 정보도 포함)
 	public List<EmpVO> detail(EmpVO empVO);
 	//직원 삭제
-	int deletePost(EmpVO empVO);
-	List<EmpVO> list();
+	public int deletePost(EmpVO empVO);
+	//직원 목록
+	public List<EmpVO> list(Map<String, String> map);
+	//직원 상세보기 1명
+	public EmpVO detailOne(EmpVO empVO);
+	//목록의 행 수를 구함
+	public int getTotal(Map<String, String> map);
 	
+	/////////////////////////////////
+	//회원 로그인
+	public MemVO memLogin(MemVO memVO);
+	
+
 }

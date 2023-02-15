@@ -206,7 +206,7 @@
 <div class="bd-example" id="employee" >
 	<form:form modelAttribute="empVO" action="/emp/createPost" method="post"
 			 class="row g-3">
-		<input type="text" name="mode" id="mode" value="update" />
+		<input type="hidden" name="mode" id="mode" value="update" />
 		<!-- 직원번호 -->
 		<div class="col-md-6" style="clear:both;">
 		  <label for="empNum" class="form-label">직원번호</label>
@@ -293,12 +293,14 @@
 			<span class="spn1">
 				<button type="button" id="edit" class="btn btn-primary edit">수정</button>
 				<button type="button" id="delete" class="btn btn-danger delete">삭제</button>
+				<a href="/emp/list" class="btn btn-info list">목록</a>
 			</span>
 			<!-- 수정모드 시작 -->
 			<span class="spn2" style="display:none;">
 				<button type="submit" id="ok" class="btn btn-success ok">확인</button>
 				<button type="button" id="cancel" class="btn btn-warning cancel">취소</button>
 			</span>
+<!-- 			<button type="button" id="" class="btn btn-info list">목록</button> -->
 		</div>	
 		
 	</form:form>
@@ -397,6 +399,7 @@
 			<span class="spn1">
 				<button type="button" id="edit" class="btn btn-primary edit">수정</button>
 				<button type="button" id="delete" class="btn btn-danger delete">삭제</button>
+				<a href="/emp/list" class="btn btn-info list">목록</a>
 			</span>
 			<!-- 수정모드 시작 -->
 			<span class="spn2" style="display:none;">
@@ -404,7 +407,6 @@
 				<button type="button" id="cancel" class="btn btn-warning cancel">취소</button>
 			</span>
 		</div>
-		
 	</form:form>	
 </c:if>
 </div>

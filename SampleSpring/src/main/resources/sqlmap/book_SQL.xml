@@ -13,6 +13,28 @@
 		</if>
 	</sql>
 	
+	<resultMap type="bookVO" id="bookMap">
+		<id property="bookId" column="BOOK_ID"/>
+		<result property="bookId" column="BOOK_ID"/>
+		<result property="title" column="TITLE"/>
+		<result property="category" column="CATEGORY"/>
+		<result property="price" column="PRICE"/>
+		<result property="insertDate" column="INSERT_DATE"/>
+		<collection property="bookFileList" resultMap="bookFileMap"/>
+	</resultMap>
+	
+	<!-- bookFileVO -->
+	<resultMap type="bookFileVO" id="bookFileMap">
+		<id property="fileNo" column="FILE_NO"/>	<!-- 고유키로 설정해야해서 꼭 넣어야함 -->
+		<result property="fileNo" column="FILE_NO"/>
+		<result property="fileName" column="FILE_NAME"/>
+		<result property="fileSize" column="FILE_SIZE"/>
+		<result property="fileFancysize" column="FILE_FANCYSIZE"/>
+		<result property="fileMime" column="FILE_MIME"/>
+		<result property="fileSavepath" column="FILE_SAVEPATH"/>
+		<result property="fileDowncount" column="FILE_DOWNCOUNT"/>
+	</resultMap>
+	
 	<select id="selectBookList" parameterType="hashMap" resultType="hashMap">
 		SELECT
 			BOOK_ID, TITLE, CATEGORY, PRICE, INSERT_DATE, CONTENT
@@ -35,13 +57,13 @@
 	
 	<insert id="insertBook" parameterType="hashMap">
 		<!-- selectKey로 추출한 book_id가 hashMap에 담겨서 controller로 넘어감 -->
-		<selectKey keyProperty="book_id" resultType="int" order="BEFORE">
+		<selectKey keyProperty="bookId" resultType="int" order="BEFORE">
 			SELECT NVL(MAX(BOOK_ID),0)+1 FROM BOOK
 		</selectKey>
 		INSERT INTO BOOK(
 			BOOK_ID, TITLE, CATEGORY, PRICE
 		)VALUES(
-				#{book_id}, #{title}, #{category}, #{price}
+				#{bookId}, #{title}, #{category}, #{price}
 		 )
 		 <!-- SEQ_BOOK.NEXTVAL => book_id로 교체 -->
 		 
@@ -96,8 +118,40 @@
 	 	]]>
 	 </select>
 	 
-	 
-	 
+	 <insert id="insertBookByFile" parameterType="bookVO">
+	 	<selectKey keyProperty="bookId" resultType="int" order="BEFORE">
+			SELECT NVL(MAX(BOOK_ID),0)+1 FROM BOOK
+		</selectKey>
+		INSERT INTO BOOK(
+			BOOK_ID, TITLE, CATEGORY, PRICE
+		)VALUES(
+				#{bookId}, #{title}, #{category}, #{price}
+		 )
+	 </insert>
+	 											<!-- mybatisAlias.xml에 있나 체크 -->
+	<insert id="insertBookFile" parameterType="bookFileVO">
+		INSERT INTO BOOKFILE(
+			FILE_NO, BOOK_ID, FILE_NAME, FILE_SIZE, FILE_FANCYSIZE, FILE_MIME
+			, FILE_SAVEPATH, FILE_DOWNCOUNT
+		) VALUES (
+			SEQ_BOOKFILE.NEXTVAL, #{bookId}, #{fileName}, #{fileSize}, #{fileFancysize}
+			, #{fileMime}, #{fileSavepath}, 0
+		)
+	</insert>
+	
+	<select id="selectBook2" parameterType="int" resultMap="bookMap">
+		<!-- 아이디가 두 테이블에 다 들어있음 => 어디 아이디인지 체크 -->
+		SELECT
+				B.BOOK_ID, TITLE, CATEGORY, PRICE
+				, TO_CHAR(INSERT_DATE, 'yy-mm-dd hh24:mi:ss') INSERT_DATE
+				, FILE_NO, FILE_NAME, FILE_SIZE, FILE_FANCYSIZE, FILE_MIME
+				, FILE_SAVEPATH, FILE_DOWNCOUNT
+		FROM 	BOOK B LEFT OUTER JOIN BOOKFILE BF ON(B.BOOK_ID = BF.BOOK_ID)
+		WHERE	B.BOOK_ID = #{bookId}  
+		
+	</select>
+	
+	
 </mapper>
 
 <!-- VO는 해당 변수와 같은 글씨에 자동으로 바인딩

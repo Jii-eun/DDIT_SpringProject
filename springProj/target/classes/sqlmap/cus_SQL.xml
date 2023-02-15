@@ -41,6 +41,53 @@
 		    VALUES(#{carVO.carNum}, #{carVO.mnfNum}, #{carVO.dt}, #{carVO.dist}, #{carVO.cusNum})
 		</foreach>
 	</update>
+
+	<!-- cusMap 만들기 -->
+	<!-- 고객 : 자동차 = 1 : N -->
+	<resultMap type="cusVO" id="cusMap">
+		<result property="cusNum" column="CUS_NUM"/>	<!-- cusVO의 기본키 -->
+		<result property="cusNm" column="CUS_NM"/>
+		<result property="cusAddr" column="CUS_ADDR"/>
+		<result property="cusPhe" column="CUS_PHE"/>
+		<result property="postno" column="POSTNO"/>
+		<result property="addrDet" column="ADDR_DET"/>
+		<result property="cusBir" column="CUS_BIR"/>
+		<result property="hobby" column="HOBBY"/>
+		<result property="gender" column="GENDER"/>
+		<result property="nationality" column="NATIONALITY"/>
+<!-- 		<collection property="hobbyList" column="" /> -->
+		<collection property="carVOList" resultMap="carMap" />
+<!-- 		<collection property="serVOList" column="" /> -->
+		<!-- association은 1:1, collection은 1:多-->
+	</resultMap>
+	
+	<resultMap type="carVO" id="carMap">
+		<result property="carNum" column="CAR_NUM"/>
+		<result property="mnfNum" column="MNF_NUM"/>
+		<result property="dt" column="DT"/>
+		<result property="dist" column="DIST"/>
+		<result property="cusNum" column="CUS_NUM"/> <!-- carVO의 외래키로 전이 -->
+<!-- 		<collection property="serVOList" resultMap="serMap"></collection> -->
+	</resultMap>
+	
+	<!-- ★ cusVO : carVO = 1 : 多 
+		  carVO : serVO = 1:多 -->
+<!-- 	<resultMap type="serVO" id="serMap"></resultMap> -->
+	
+	<!-- 고객 상세보기 -->
+	<select id="detail" parameterType="cusVO" resultMap="cusMap">
+<!-- 		SELECT CUS_NUM, CUS_NM, CUS_ADDR, CUS_PHE, POSTNO -->
+<!-- 	        	, ADDR_DET, CUS_BIR, HOBBY, GENDER, NATIONALITY -->
+<!-- 		FROM CUS -->
+<!-- 		WHERE CUS_NUM =#{cusNum}  -->
+
+		SELECT  A.CUS_NUM, A.CUS_NM, A.CUS_ADDR, A.CUS_PHE, A.POSTNO, A.ADDR_DET
+		        , A.CUS_BIR, A.HOBBY, A.GENDER, A.NATIONALITY
+		        , B.CAR_NUM, B.MNF_NUM, B.DT, B.DIST, B.CUS_NUM
+		FROM    CUS A INNER JOIN CAR B ON(A.CUS_NUM = B.CUS_NUM)
+		WHERE   A.CUS_NUM = #{cusNum}
+	</select>
+	
 	
 </mapper>
   

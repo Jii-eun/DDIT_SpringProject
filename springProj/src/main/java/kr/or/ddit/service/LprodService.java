@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 import kr.or.ddit.vo.AttachVO;
 import kr.or.ddit.vo.BookVO;
 import kr.or.ddit.vo.LprodVO;
@@ -39,7 +41,34 @@ public interface LprodService {
 
 	//전체 행의 수(total)
 	int getTotal(String keyword);
-	
+
+	//상품별 판매금액의 합계가 천만원이 넘는 데이터
+	public JSONObject cartMoney();
+
+	//회원별 구매횟수 구하기
+	public JSONObject memberMoney();
 	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

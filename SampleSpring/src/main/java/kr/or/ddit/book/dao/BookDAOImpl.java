@@ -9,6 +9,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.or.ddit.vo.BookFileVO;
 import kr.or.ddit.vo.BookVO;
 import kr.or.ddit.vo.PaginationInfoVO;
 
@@ -59,6 +60,21 @@ public class BookDAOImpl implements IBookDAO{
 	@Override
 	public List<BookVO> selectBookList(PaginationInfoVO<BookVO> pagingVO) {
 		return sqlSessionTemplate.selectList("Book.selectBookList2", pagingVO);
+	}
+
+	@Override
+	public int insertBookByFile(BookVO bookVO) {
+		return sqlSessionTemplate.insert("Book.insertBookByFile", bookVO);
+	}
+
+	@Override
+	public void insertBookFile(BookFileVO bookFileVO) {
+		sqlSessionTemplate.insert("Book.insertBookFile", bookFileVO);
+	}
+
+	@Override
+	public BookVO selectBook2(int bookId) {
+		return sqlSessionTemplate.selectOne("Book.selectBook2", bookId);
 	}
 	
 }

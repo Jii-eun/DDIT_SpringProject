@@ -101,6 +101,18 @@ public class LprodDao {
 		return this.sqlSessiontemplate.selectOne("lprod.getTotal", keyword);
 	}
 	
+	//상품별 판매금액의 합계가 천만원을 넘은 데이터
+	//<select id="cartMoney" resultType="hashMap">
+	public List<Map<String, Object>> cartMoney(){
+		return this.sqlSessiontemplate.selectList("lprod.cartMoney");
+	}
+	
+	//회원별 구매횟수 구하기
+	//<select id="memberMoney" resultType="hashMap">
+	public List<Map<String, Object>> memberMoney(){
+		return this.sqlSessiontemplate.selectList("lprod.memberMoney");
+	}
+	
 }
 
 

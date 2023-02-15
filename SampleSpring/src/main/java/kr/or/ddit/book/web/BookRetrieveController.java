@@ -86,6 +86,14 @@ public class BookRetrieveController {
 		model.addAttribute("pagingVO", pagingVO);
 		return "book/list2";
 	}
+	
+	@RequestMapping(value="/detail2.do", method = RequestMethod.GET)
+	public String detail2(@RequestParam int bookId, Model model) {
+		BookVO bookVO = bookService.selectBook2(bookId);
+		model.addAttribute("book", bookVO);
+		System.out.println(bookVO.toString());
+		return "book/detail2";
+	}
 
 }
 

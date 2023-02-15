@@ -22,9 +22,14 @@ public class EmpVO {
 	@NotNull
 	private int empPay;		//급여
 	private String empMjNum;	//매니저
+	//매니저명(EMP_MH_NM)		
+	private String empMjNm;	//매니저명(list를 받아올때 값 처리를 위해 추가)
+	//행번호
+	private int rnum;
+	
 	//직원(EMP) : 서비스(SER) = 1 : N
 	private List<SerVO> serVOList;
-	
+
 }
 
 

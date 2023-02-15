@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+	<!-- xmlns => ns : namespace 약자 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+						<!-- ""따옴표 안에 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 추가했음 -->
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<!-- root-context.xml : 스프링 설정 파일 
 		  스프링 설정? view와 관련되지 않은 객체를 정의
@@ -10,7 +13,8 @@
 		 BasicDataSource dataSource = new BasicDataSource();
 		 dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
 	 -->
-	<!-- dataSource : 데이터베이스와 관련된 정보를 설정 -->		
+	<!-- dataSource : 데이터베이스와 관련된 정보를 설정 -->
+	<!-- jdbc와 db연결 -->		
 	<bean id="dataSource"
 		class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close" >
@@ -60,8 +64,38 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	 	<property name="basePackage" value="kr.or.ddit.mapper" />
 	</bean>	
+	
+	<!-- 2023.02.10 추가 (트랜잭션, 예외처리) -->
+	<!-- 
+		트랜잭션 : 데이터베이스를 변경하기 위해 수행되어야할 논리적 단위. 여러개의 sql로 구성됨
+		원자성, 일관성, 고립성(격리성) 지속성(영속성)
+		
+		* xmlns:tx (tx = transaction)
+	 -->
+	<!-- 트랜잭션 관리자의 자바빈 객체를  정의함 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>		
+	</bean>
+	
+	<!-- 애너테이션 기반의 트랜잭션 제어를 활성화 -->
+	<!-- tx: <== xmlns:tx~~를 위에서 적었기 때문에 쓸 수 있음 -->
+	<tx:annotation-driven />
+	
 			
 </beans>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

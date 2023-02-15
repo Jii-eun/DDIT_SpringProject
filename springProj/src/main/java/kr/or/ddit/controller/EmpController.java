@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.ddit.service.EmpService;
+import kr.or.ddit.util.ArticlePage;
 import kr.or.ddit.vo.EmpVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -160,12 +161,12 @@ public class EmpController {
 	
 	/*
 	  	요청URI : /emp/deletePost
-	  	요청파라미터 : let data = {"empNum" : empNum};
+	  	요청파라미터 : let data = {"empNum":empNum};
 	  	요청방식 : post
 	  	응답데이터타입 : json
 	  	응답데이터 : {"result" : "1"}
 	 */
-	@ResponseBody		//==>ajax, json형태
+	@ResponseBody		//==>데이터를 json형태로 받아야 할때
 	@PostMapping("/deletePost")			//↓ json데이터를 받을때는 여기에 @RequestBody
 	public Map<String, String> deletePost(@RequestBody EmpVO empVO) {
 		//empVO : {empNum=EMP001, zipCode=null, address=null, ..., empMjNum=null}
@@ -183,20 +184,97 @@ public class EmpController {
 	/*	
  		요청URI : /emp/list
  		요청방식 : get
+ 		요청파라미터 : show=10&keyword=개똥이
+ 			  ==> show=10&keyword=개똥이&currentPage=1
+ 		
+ 		 map은 RequestParam
+ 		 vo는 ModelAttribute
+ 		 json은 RequestBody
+ 		 
+ 		 ?show=10&keyword=김철수 처럼 currentPage가 없을 수 있음 -> 처리 필요 -> (required=false)
+ 		 
+ 		 /emp/list ==> 이 주소로 넘어오면  show가 없으니까... => 보정처리 ◆◆◆◆◆
+ 		
 	 */
 	@GetMapping("/list")
-	public String list(Model model){
-		List<EmpVO> empVOList = this.empService.list();
+	public String list(Model model
+//			, @RequestParam(value="keyword", required = false) String Keyword
+			//예전엔 하나씩 받아왔는데..이번엔 Map으로
+			, @RequestParam Map<String, String> map	 //검색조건과 keyword가 들어옴
+			, @RequestParam(value="currentPage",required = false, defaultValue = "1") int currentPage	
+												// ↑데이터타입을 int로 넣어주면 string타입이 자동으로 변환된다.
+												//스트링이라 @requestparam을 생략 가능하긴하지만 써주는게 맞음
+			, @RequestParam(value="show", required = false, defaultValue = "10") int size
+														){
+		//넘어온 파라미터 확인
+		log.info("map : " + map);
+		log.info("currentPage : " + currentPage);
+		log.info("size : " + size);
+		//map은 jsp에서 넘어오는 변수를 갖고있음. 거기에 추가로 필요한 값을 setting
+		//map{show=10, keyword=개똥이, currentPage=1}
+		map.put("currentPage", currentPage+"");
 		
-		log.info("empVOList ; " + empVOList);
+		//	◆◆◆◆◆ show 보정처리
+		//1) /emp/list : show가 null	 <========== if문 전자 처리
+		//2) /emp/list?show= : show의 값이 없음 <========== if문 후자 처리
+		if(map.get("show") ==null || map.get("show").length() <1) {
+			map.put("show", "10");
+			//parameter 처리를 할 때 기본값이 주어진 것은 size인데
+			//여기서는 size를 넘긴게 아니라 show를 map에 담아 넘겨야하기때문에 null값일대와 ""일때의 처리를 다 직접 해줘야한다.
+			//만약 size 그대로 넘겼다면 따로 처리를 안해도 기본값 10으로 들어간다.
+		}
 		
-		model.addAttribute("data", empVOList);
+		//map으로 파라미터를 받아서 매퍼 xml에서 검색 조건으로 사용
+		List<EmpVO> empVOList = this.empService.list(map);	//=content
+		log.info("empVOList :" + empVOList );
+		
+		//total
+		int total = this.empService.getTotal(map);
+		log.info("total : " + total);
+		
+		//size <- map.get("show")
+//		int size = Integer.parseInt(map.get("show")); //==> parameter로 받아옴			
+		
+		//empVOList 객체를 페이징 처리해보자
+		//new ArticlePage<EmpVO>(total, currentPage, size, content)
+		ArticlePage<EmpVO> article = new ArticlePage<EmpVO>(total, currentPage, size, empVOList);
+		model.addAttribute("data", article);
 		
 		//forwarding
 		return "emp/list";
 	}
 	
+	/**
+	 *  직원 1명의 정보를 리턴
+	 	요청URI : /emp/detailOne
+	 	요청파라미터 : let data = {"empMjNum":empMjNum}	//띄어쓰기 하면 안된다고함
+	 	요청방식 : post
+	 	응답데이터타입 : json
+	 */
+	@ResponseBody	//json으로 응답하기 위해서 ResponseBody를 쓴다.
+	@PostMapping("/detailOne")
+	public EmpVO detailOne(@RequestBody EmpVO empVO) {
+		log.info("empVO : " + empVO);
+		
+		empVO = this.empService.detailOne(empVO);
+		
+		return empVO;
+	}
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

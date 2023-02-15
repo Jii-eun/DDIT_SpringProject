@@ -1,10 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	<!-- c:xx 쓸 수 있음 -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>	<!-- c:xx 쓸 수 있음 -->
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>	<!-- form:xx 쓸 수 있음 -->
+<!-- bootStrap css -->
 <link rel="stylesheet" href="/resources/css/bootstrap.min.css" />
 <!-- ↓ daum API -->
 <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
-<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<!-- jQuery -->
+<link rel="stylesheet" href="/resources/css/bootstrap.min.css" />
+<!-- ↓ daum API -->
 <script type="text/javascript">
 	$(function(){
 		$("#btnPostno").on("click", function(){
@@ -68,9 +72,14 @@
 				<label for="postno" class="form-label">우편번호</label>
 			</div>
 			<div> 
-				<input type="text" class="form-control"
-					id="postno" name="postno" placeholder="우편번호를 입력하세요"
-					style="width:80%;float:left;" />
+<!-- 				<input type="text" class="form-control" -->
+<!-- 					id="postno" name="postno" placeholder="우편번호를 입력하세요" -->
+<%-- 					style="width:80%;float:left;" value="${cusVO.postno }" /> --%>
+				<!-- id="postno" name="post" 위 아래 둘 다 가능
+					: path="postno" ↓ spring form태그 사용 
+					-->
+				<form:input path="postno" class="form-control"
+					placeholder="우편번호를 입력하세요" style="width:80%;float:left;" />
 				<input class="btn btn-info" type="button" value="우편번호 검색"
 					style="width:20%;float:right;" id="btnPostno" />
 			</div>
@@ -80,14 +89,18 @@
 				주소
 			</label> 
 			<input type="text" class="form-control"
-				id="cusAddr" name="cusAddr" placeholder="주소를 입력하세요">
+				id="cusAddr" name="cusAddr" placeholder="주소를 입력하세요"
+				value="${cusVO.cusAddr }" />
 		</div>
 		<div class="mb-3">
 			<label for="addrDet" class="form-label">
 				상세 주소
 			</label> 
-			<input type="text" class="form-control"
-				id="addrDet" name="addrDet" placeholder="상세 주소를 입력하세요">
+<!-- 			<input type="text" class="form-control" -->
+<!-- 				id="addrDet" name="addrDet" placeholder="상세 주소를 입력하세요"> -->
+			<form:input path="addrDet" class="form-control"
+				 placeholder="상세 주소를 입력하세요" />
+			<!-- ↑ form:input이란 ainput type="text">이다. -->
 		</div>
 		
 		<div class="mb-3">
@@ -95,7 +108,8 @@
 				연락처
 			</label> 
 			<input type="text" class="form-control"
-				id="cusPhe" name="cusPhe" placeholder="연락처를 입력하세요">
+				id="cusPhe" name="cusPhe" 
+				placeholder="연락처를 입력하세요" value="${cusVO.cusPhe }" />
 			<form:errors path="cusPhe" style="color:red;"/>
 		</div>
 		<!-- jsp에 입력한 내용이 CusVO로 넘어갈 때 String으로 넘어간다.
@@ -105,14 +119,18 @@
 		<div class="mb-3">
 			<label for="cusBir" class="form-label">
 				생일
-			</label>
-			<input type="date" class="form-control"
-					id="cusBir" name="cusBir" placeholder="생일을 입력하세요">
+			</label>	<!-- date => text로 바꿈 -->
+			<input type="text" class="form-control"
+					id="cusBir" name="cusBir" placeholder="생일을 입력하세요"
+					value="<fmt:formatDate pattern='yyyy-MM-dd' value='${cusVO.cusBir }' />" />
+			<form:input path="cusBir" class="form-control"
+					placeholder="생일을 입력하세요" />
 			<form:errors path="cusBir" style="color:red;"/>
 		</div>
 		
 		<div class="mb-3">
-			<label for="exampleFormControlTextarea1" class="form-label">
+			<!-- path : id="hobbyList" name="hobbyList" -->
+			<label for="hobbyList" class="form-label">
 				취미
 			</label>			<!--  path : cusVO의 변수와 같게 -->
 			<form:checkbox path="hobbyList" value="Music" label="Music"/>
@@ -122,7 +140,7 @@
 		
 		<div class="mb-3">
 			<!-- 성별 : (남성 : male, 여성  : female, 기타 : others) -->
-			<label for="" class="form-label">성별</label>
+			<label for="gender" class="form-label">성별</label>
 			<form:radiobutton path="gender" value="male" label="male"/>
 			<!-- cusVO.setGender("female"); -->
 			<form:radiobutton path="gender" value="female" label="female"/>
@@ -131,7 +149,7 @@
 		
 		<div class="mb-3">
 			<!-- 국적(한 개 선택) => select박스 -->
-			<label for="exampleFormControlTextarea1" class="form-label">국적</label>
+			<label for="nationality" class="form-label">국적</label>
 			<form:select path="nationality" items="${nationalityMap }" />
 													<!-- model로 가져옴 -->
 		</div>
@@ -142,37 +160,36 @@
 			  <div class="card-header">
 			    소유자동차
 			  </div>
+			  <!-- 
+			  	cusVO : CusVO cusVO
+			  	cusVO.carVOList : List<CarVO> carVOList
+			   -->
 			  <ul class="list-group list-group-flush">
+			  <c:forEach var="carVO" items="${cusVO.carVOList }" varStatus="stat">
 			    <li class="list-group-item">
 <!-- 			    	<div>자동차번호 : <input type="text" class="form-control" style="width : 15; "/></div> -->
 <!-- 			    	제조 번호 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
 <!-- 			    	연식 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
 <!-- 			    	주행거리 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
-						
-						<input type="hidden" name="carVOList[0].cusNum" value="${cusNum }" />
-	 					<input type="text" class="form-control" name="carVOList[0].carNum"
-			               style="width:25%;float:left;" placeholder="자동차번호" required/>
-			            <input type="text" class="form-control" name="carVOList[0].mnfNum"
-			               style="width:25%;float:left;" placeholder="제조 번호" required/>
+												<!-- name에는 값이 들어오면 안되고 리스트에 몇번째 인덱스 어떤 매개변수인지 그대로 넣는 것
+													detail 에서 나중에 수정에 사용하기  위해?  -->
+						<input type="hidden" name="carVOList[${stat.index }].cusNum" value="${cusNum }" />
+	 					<input type="text" class="form-control" name="carVOList[${stat.index }].carNum"
+			               style="width:25%;float:left;" placeholder="자동차번호" required
+			               value="${carVO.carNum }" />
+<%-- 			            <form:form path="" --%>
+			            <input type="text" class="form-control" name="carVOList[${stat.index }].mnfNum"
+			               style="width:25%;float:left;" placeholder="제조 번호" required
+			               value="${carVO.mnfNum }" />
 			            <input type="date" class="form-control" name="carVOList[0].dt"
-			               style="width:25%;float:left;" placeholder="연식" required/>
+			               style="width:25%;float:left;" placeholder="연식" required
+			               value="<fmt:formatDate pattern='yyyy-MM-dd' value='${carVO.dt }' />" />
 			            <input type="text" class="form-control" name="carVOList[0].dist"
-             			   style="width:25%;float:left;" placeholder="주행거리" required/>
+             			   style="width:25%;float:left;" placeholder="주행거리" required
+             			   value="${carVO.dist }" />
              			   <!-- CarVO에 있는 변수들이니까 -->
-	 					
 			    </li>
-			    <li class="list-group-item">
-						<input type="hidden" name="carVOList[1].cusNum" value="${cusNum }" />
-	 					<input type="text" class="form-control" name="carVOList[1].carNum"
-			               style="width:25%;float:left;" placeholder="자동차번호" />
-			            <input type="text" class="form-control"name="carVOList[1].mnfNum"
-			               style="width:25%;float:left;" placeholder="제조 번호" />
-			            <input type="date" class="form-control" name="carVOList[1].dt"
-			               style="width:25%;float:left;" placeholder="연식" />
-			            <input type="text" class="form-control"  name="carVOList[1].dist"
-             			   style="width:25%;float:left;" placeholder="주행거리" />
-	 					
-			    </li>
+			  </c:forEach>
 			  </ul>
 			</div>
 		</div>

@@ -181,7 +181,28 @@
 		WHERE	1 = 1
 		<include refid="search"></include>
 	</select>
-
+	
+	<!-- 상품별 판매금액의 합계가 천만원을 넘은 데이터 -->
+	<!-- prod_name과 money를 갖고있는 vo가 없으니가 hashMap으로 -->
+	<select id="cartMoney" resultType="hashMap">
+		SELECT  P.PROD_NAME 
+		        , SUM(P.PROD_SALE * C.CART_QTY) MONEY
+		FROM    PROD P, CART C
+		WHERE   P.PROD_ID = C.CART_PROD
+		GROUP   BY P.PROD_NAME
+		HAVING  SUM(P.PROD_SALE * C.CART_QTY) >= 10000000
+	</select>
+	
+	<!-- 회원별 구매횟수 구하기 -->
+	<select id="memberMoney" resultType="hashMap">
+		SELECT  MEM_ID || '(' || MEM_NAME || ')' MEMID
+		        ,  COUNT(CART_NO) CARTCNT
+		FROM    MEMBER M, CART C
+		WHERE   M.MEM_ID = C.CART_MEMBER
+		GROUP BY MEM_ID || '(' || MEM_NAME || ')'
+		HAVING COUNT(CART_NO) >= 10
+		ORDER BY 1
+	</select>
 </mapper>
 
 

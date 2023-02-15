@@ -149,6 +149,24 @@ public class CusController {
 		//상세보기
 		cusVO = this.cusService.detail(cusVO);
 		
+		/*  CusVO(cusNum=CUS001, cusNm=개똥이, cusAddr=대전 중구, cusPhe=010-123-1234
+			, postno=12345, addrDet=계룡로123, cusBir=Mon Dec 25 00:00:00 KST 2000
+			, hobbyList=null, hobby=Music, Sports,, gender=female, nationality=Korea 
+			. carVOList=null, serVOList=null)
+		*/
+		log.info("cusVO : " + cusVO);
+		
+		//	[0]		[1]		[2]
+		//  str +=  str   +  "," ;
+		//Music,  Sports,  
+		String hobby = cusVO.getHobby();
+		String[] hobbyArray = hobby.split(",");
+		List<String> hobbyList = new ArrayList<String>();
+		for (int i = 0; i < hobbyArray.length; i++) {
+			hobbyList.add(hobbyArray[i]);
+		}
+		cusVO.setHobbyList(hobbyList);
+		
 		//국적(한 개 선택) => select박스
 		Map<String, String> nationalityMap = new HashMap<String, String>();
 		//map은 interface?		=========> hashMap을 이용해서 class로 구현 ????
@@ -157,6 +175,7 @@ public class CusController {
 		nationalityMap.put("Germany", "Germany");
 		
 		model.addAttribute("nationalityMap", nationalityMap); 
+		model.addAttribute("cusVO", cusVO);
 		//=> detail.jsp에 값이 전해짐 <form:select path="nationality" items="${nationalityMap }" />
 		
 		//forwarding

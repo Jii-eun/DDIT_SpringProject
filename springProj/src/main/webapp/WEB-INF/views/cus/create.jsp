@@ -123,7 +123,7 @@
 		</div>
 		
 		<div class="mb-3">
-			<label for="exampleFormControlTextarea1" class="form-label">
+			<label for="hobbyList" class="form-label">
 				취미
 			</label>			<!--  path : cusVO의 변수와 같게 -->
 			<form:checkbox path="hobbyList" value="Music" label="Music"/>
@@ -142,51 +142,51 @@
 		
 		<div class="mb-3">
 			<!-- 국적(한 개 선택) => select박스 -->
-			<label for="exampleFormControlTextarea1" class="form-label">국적</label>
+			<label for="nationality" class="form-label">국적</label>
 			<form:select path="nationality" items="${nationalityMap }" />
 													<!-- model로 가져옴 -->
 		</div>
 
-<!-- 		<div class="mb-3">	1:多관계 insert -->
-<!-- 			<!-- 고객 : 소유 자동차(List<CarVO>carVOList) = 1 : N --> -->
-<!-- 			<div class="card" style="width: 100%;"> -->
-<!-- 			  <div class="card-header"> -->
-<!-- 			    소유자동차 -->
-<!-- 			  </div> -->
-<!-- 			  <ul class="list-group list-group-flush"> -->
-<!-- 			    <li class="list-group-item"> -->
-<!-- 			    	<div>자동차번호 : <input type="text" class="form-control" style="width : 15; "/></div> -->
+		<div class="mb-3">	<!-- 1:多관계 insert -->
+			<!-- 고객 : 소유 자동차(List<CarVO>carVOList) = 1 : N -->
+			<div class="card" style="width: 100%;">
+			  <div class="card-header">
+			    소유자동차
+			  </div>
+			  <ul class="list-group list-group-flush">
+			    <li class="list-group-item">
+<!-- 			    	자동차번호 : <input type="text" class="form-control" style="width : 15; "/> -->
 <!-- 			    	제조 번호 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
 <!-- 			    	연식 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
 <!-- 			    	주행거리 : <input type="text" class="form-control" style="width : 15%; flaot:left;" /> -->
 						
-<%-- 						<input type="hidden" name="carVOList[0].cusNum" value="${cusNum }" /> --%>
-<!-- 	 					<input type="text" class="form-control" name="carVOList[0].carNum" -->
-<!-- 			               style="width:25%;float:left;" placeholder="자동차번호" required/> -->
-<!-- 			            <input type="text" class="form-control" name="carVOList[0].mnfNum" -->
-<!-- 			               style="width:25%;float:left;" placeholder="제조 번호" required/> -->
-<!-- 			            <input type="date" class="form-control" name="carVOList[0].dt" -->
-<!-- 			               style="width:25%;float:left;" placeholder="연식" required/> -->
-<!-- 			            <input type="text" class="form-control" name="carVOList[0].dist" -->
-<!--              			   style="width:25%;float:left;" placeholder="주행거리" required/> -->
-<!--              			   CarVO에 있는 변수들이니까 -->
+						<input type="hidden" name="carVOList[0].cusNum" value="${cusNum }" />
+	 					<input type="text" class="form-control" name="carVOList[0].carNum"
+			               style="width:25%;float:left;" placeholder="자동차번호" required/>
+			            <input type="text" class="form-control" name="carVOList[0].mnfNum"
+			               style="width:25%;float:left;" placeholder="제조 번호" required/>
+			            <input type="date" class="form-control" name="carVOList[0].dt"
+			               style="width:25%;float:left;" placeholder="연식" required/>
+			            <input type="text" class="form-control" name="carVOList[0].dist"
+             			   style="width:25%;float:left;" placeholder="주행거리" required/>
+             			   <!-- CarVO에 있는 변수들이니까 -->
 	 					
-<!-- 			    </li> -->
-<!-- 			    <li class="list-group-item"> -->
-<%-- 						<input type="hidden" name="carVOList[1].cusNum" value="${cusNum }" /> --%>
-<!-- 	 					<input type="text" class="form-control" name="carVOList[1].carNum" -->
-<!-- 			               style="width:25%;float:left;" placeholder="자동차번호" /> -->
-<!-- 			            <input type="text" class="form-control"name="carVOList[1].mnfNum" -->
-<!-- 			               style="width:25%;float:left;" placeholder="제조 번호" /> -->
-<!-- 			            <input type="date" class="form-control" name="carVOList[1].dt" -->
-<!-- 			               style="width:25%;float:left;" placeholder="연식" /> -->
-<!-- 			            <input type="text" class="form-control"  name="carVOList[1].dist" -->
-<!--              			   style="width:25%;float:left;" placeholder="주행거리" /> -->
+			    </li>
+			    <li class="list-group-item">
+						<input type="hidden" name="carVOList[1].cusNum" value="${cusNum }" />
+	 					<input type="text" class="form-control" name="carVOList[1].carNum"
+			               style="width:25%;float:left;" placeholder="자동차번호" />
+			            <input type="text" class="form-control"name="carVOList[1].mnfNum"
+			               style="width:25%;float:left;" placeholder="제조 번호" />
+			            <input type="date" class="form-control" name="carVOList[1].dt"
+			               style="width:25%;float:left;" placeholder="연식" />
+			            <input type="text" class="form-control"  name="carVOList[1].dist"
+             			   style="width:25%;float:left;" placeholder="주행거리" />
 	 					
-<!-- 			    </li> -->
-<!-- 			  </ul> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
+			    </li>
+			  </ul>
+			</div>
+		</div>
 	
 		
 <!-- 		<div class="mb-3"> -->

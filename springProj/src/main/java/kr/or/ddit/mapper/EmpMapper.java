@@ -1,8 +1,10 @@
 package kr.or.ddit.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.or.ddit.vo.EmpVO;
+import kr.or.ddit.vo.MemVO;
 
 public interface EmpMapper {
 
@@ -28,5 +30,53 @@ public interface EmpMapper {
 	
 	//직원 목록
 	//<select id="list" resultType="empVO">
-	public List<EmpVO> list();
+	public List<EmpVO> list(Map<String, String> map);
+	
+	//직원 상세보기 1명
+	public EmpVO detailOne(EmpVO empVO);
+	
+	//목록의 행 수를 구함
+	public int getTotal(Map<String, String> map);
+	
+	//////////////////////////////////////////////////
+
+	//회원 로그인
+	//<select id="memLogin" parameterType="memVO" resultMap="memMap">
+	public MemVO memLogin(MemVO memVO);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

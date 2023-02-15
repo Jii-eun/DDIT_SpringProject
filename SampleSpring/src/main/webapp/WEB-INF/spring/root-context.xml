@@ -39,10 +39,10 @@
 	 -->
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="sqlSessionFactory" />
-	</bean>
-	
+	</bean>	
 	
 	<!-- 23.01.27 파일업로드 수업 때 추가 -->
+	<!-- 0209 파일 테이블만들면서 multipartResolver, uploadPath 추가(난 돼있었음) -->
 								<!-- class: 객체를 생성하기 위한 설계도? -->
 	<bean id="multipartResolver" 
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
