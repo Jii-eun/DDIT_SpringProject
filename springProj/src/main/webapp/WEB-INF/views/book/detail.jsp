@@ -63,7 +63,7 @@
 					 -->
 					<c:forEach var="attachVO" items="${data.attachVOList }" varStatus="stat">
 						<div class="card" style="width: 200px; display: inline-block;">
-							<img src="/resources/upload/${attachVO.thumbnail }" class="card-img-top" 
+							<img src="/resources/upload${attachVO.thumbnail }" class="card-img-top" 
 									title="${attachVO.thumbnail }" alt="${attachVO.thumbnail }">
 							<div class="card-body">
 								<p class="card-title">${attachVO.filename }</p>

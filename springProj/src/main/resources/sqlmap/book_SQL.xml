@@ -151,10 +151,10 @@
 		<!-- index : 반복 시 index값. 0부터 시작. -->
 		<foreach collection="list" item="attachVO"
 				open="INSERT ALL" close="SELECT * FROM DUAL" 
-				separator=" " index="idx">
-			INTO ATTA  #{attachVO.thumbnail}CH(SEQ, FILENAME, FILESIZE, THUMBNAIL, REGDATE, ETP_ID)
-		    VALUES(#{idx}+#{seq}, #{attachVO.filename}, #{attachVO.filesize},
-		    		, sysdate, #{attachVO.etpId} )		
+				separator=" " index="idx">	
+		    INTO ATTACH(SEQ, FILENAME, FILESIZE, THUMBNAIL, REGDATE, ETP_ID) 
+         		 VALUES(#{idx} + #{seq}, #{attachVO.filename}, #{attachVO.filesize}
+         		 		,'', sysdate, #{attachVO.etpId})	
 		    	<!-- index는 0부 터 시작 => seq 값에 0부터 1씩 커지는 수를 더해서 증가시킴 -->
 		    	<!-- #{}안에 들어있는 변수 = attachVO의 변수 -->
 		</foreach>

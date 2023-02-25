@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,30 +77,53 @@ $(function(){
 </script>
 </head>
 <body>
-<h1>책 등록</h1>
-<!-- 폼페이지 -->
-<!-- 
-	요청URI : /create?title=개똥이글로리&category=소설&price=10000
-	요청파라미터 : title=개똥이글로리&category=소설&price=10000
-	요청방식 : post
--->
-<form action="/create" method="post" enctype="multipart/form-data">
-	<!-- 폼 데이터 -->
-	<div class="imgs_wrap"></div>
-	<p>제목 : <input type="text" name="title" required /></p>
-	<p>카테고리 : <input type="text" name="category" required /></p>
-	<p>가격 : <input type="number" name="price" required /></p>
-	<p>내용 : <textarea name="cont" rows="5" cols="30"></textarea></p>
-	<p>
-		책표지 : <input type="file" id="input_imgs" name="uploadfiles" multiple />
-	</p>
-	<p>
-		<input type="submit" value="저장" />
-		<input type="button" value="목록" />
-	</p>
-</form>
-<script type="text/javascript">
-	CKEDITOR.replace('cont');
-</script>
-</body>
+	<h1>책 등록</h1>
+	<!-- 폼페이지 -->
+	<!-- 
+		요청URI : /create?title=개똥이글로리&category=소설&price=10000
+		요청파라미터 : title=개똥이글로리&category=소설&price=10000
+		요청방식 : post
+		
+		스프링 시큐리티를 사용할 경우 action 경로 뒤에 csrf 토큰을 입력해야 함.
+		(multipart/form-data로 전송할 경우에만)
+	-->
+		<form action="/create" method="post" enctype="multipart/form-data">
+			<!-- 폼 데이터 -->
+			<div class="imgs_wrap"></div>
+			<p>제목 : <input type="text" name="title" required /></p>
+			<p>카테고리 : <input type="text" name="category" required /></p>
+			<p>가격 : <input type="number" name="price" required /></p>
+			<p>내용 : <textarea name="cont" rows="5" cols="30"></textarea></p>
+			<p>
+				책표지 : <input type="file" id="input_imgs" name="uploadfiles" multiple />
+			</p>
+			<p>
+				<input type="submit" value="저장" />
+				<input type="button" value="목록" />
+			</p>
+			<sec:csrfInput />
+			<!-- ?${_csrf.parameterName}=${_csrf.token} 위와 같은 역할 -->
+		</form>
+		<script type="text/javascript">
+			CKEDITOR.replace('cont');
+		</script>
+	</body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

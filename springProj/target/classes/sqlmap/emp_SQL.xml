@@ -45,7 +45,7 @@
 <!-- 				) -->
 
 		<!-- 쿼리문 수정(0208 detail에서 수정시 수정이 되도록! -->
-		MERGE INTO EMP A --대상 테이블		
+		MERGE INTO EMP A <!-- 대상 테이블 -->		
 		USING DUAL 
 		ON(A.EMP_NUM = #{empNum})            
 		WHEN MATCHED THEN                   
@@ -190,15 +190,16 @@
 	
 	<!-- 회원 로그인 -->
 	<select id="memLogin" parameterType="memVO" resultMap="memMap">
-		SELECT  A.USER_NO, A.USER_ID, A.USER_PW, A.USER_NAME, A.COIN
-				, A.REG_DATE, A.UPD_DATE, A.ENABLED
+		SELECT  A.USER_NO, A.USER_ID
+		        , pkg_crypto.decrypt(A.USER_PW) USER_PW
+		        , A.USER_NAME, A.COIN, A.REG_DATE, A.UPD_DATE, A.ENABLED
 		        , B.USER_NO, B.AUTH
 		FROM    MEM A LEFT OUTER JOIN MEM_AUTH B 
 		        ON(A.USER_NO = B.USER_NO)
-		WHERE A.USEr_ID = #{userId}     
+		WHERE A.USER_ID = #{userId}     
 	</select>
 	
-	
+	 
 	
 	
 </mapper>

@@ -306,6 +306,9 @@
 				data : JSON.stringify(data),	//마샬링 작업, 일렬화(serialization)
 				dataType : "json",
 				type:"post",
+				beforeSend : function(xhr) {   // 데이터 전송 전  헤더에 csrf값 설정
+	                xhr.setRequestHeader("${_csrf.headerName}", "${_csrf.token}");
+				},
 				success:function(res){ //res == object 로 들어옴
 					//res : {"empNum":"EMP004","empAddr":"02830 서울 성북구 아리랑로 3 기업은행",
 					//		 "empPhe":"010-1597-1597","empNm":"철수","empPay":30000000,
