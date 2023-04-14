@@ -20,7 +20,10 @@
 				insert, update, delete할 때 redirect를 쓰는 이유 -->
 			<!-- form에서 submit하면 입력해서 넘긴 값이 param으로 자동으로 들어간다. -->
 														
-			<input type="text" name="keyword" value="${param.keyword }"
+			<inp
+			
+			
+			ut type="text" name="keyword" value="${param.keyword }"
 				placeholder="검색어를 입력하세요."/>
 			<!-- /list?keyword=개똥이 -->
 			<input type="submit" value="검색"	/>
